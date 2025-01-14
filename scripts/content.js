@@ -9,7 +9,6 @@ function getDate(){
 
 }
 
-
 for (let item of hidden_elements) {
     
     item.id = counter
@@ -41,9 +40,3 @@ for (let item of hidden_elements) {
 
     item.appendChild(button)
 }
-
-// document.getElementsByClassName('reveal-information')[0].appendChild(button)
-
-// console.log(document.querySelectorAll('[type="radio"]')[0])
-// document.querySelectorAll('[type="radio"]')[0].onclick = function(){alert("Clicked!")}
-// console.log(document.querySelectorAll('[type="radio"]')[0].checked)
