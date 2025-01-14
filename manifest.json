@@ -1,0 +1,13 @@
+{
+    "name": "Placeholder",
+    "description": "Allows automatic date pasting in gov website job logging",
+    "version": "1.0",
+    "manifest_version": 3,
+    "content_scripts": [
+        {
+          "matches": [" https://www.universal-credit.service.gov.uk/work-search/job"],
+          "js": ["content.js"]
+        }
+      ]
+  }
+
