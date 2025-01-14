@@ -1,6 +1,15 @@
 hidden_elements = document.getElementsByClassName('reveal-information')
 counter = 0
 
+function getDate(){
+
+    const date = new Date();
+
+    return [date.getDate(),date.getMonth(),date.getFullYear()]
+
+}
+
+
 for (let item of hidden_elements) {
     
     item.id = counter
@@ -10,6 +19,8 @@ for (let item of hidden_elements) {
     button.innerText = "Add today's date"
 
     button.onclick = function(e){
+
+        date = getDate()
 
         dateElement = e.target.parentNode.getElementsByClassName("form-date")[0]
 
@@ -22,9 +33,9 @@ for (let item of hidden_elements) {
         year = dateElement.getElementsByClassName("form-group-year")[0]
         yearInput = year.getElementsByTagName("input")[0]
 
-        dayInput.value = 1
-        monthInput.value = 2
-        yearInput.value = 3 
+        dayInput.value = date[0]
+        monthInput.value = date[1] + 1 
+        yearInput.value = date[2]
 
     }
 
