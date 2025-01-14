@@ -1,5 +1,5 @@
 {
-    "name": "Placeholder",
+    "name": "GovDateAdder",
     "description": "Allows automatic date pasting in gov website job logging",
     "version": "1.0",
     "manifest_version": 3,
