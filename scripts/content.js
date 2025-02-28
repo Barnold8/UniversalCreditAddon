@@ -66,7 +66,33 @@ function getDate(){
 
 }
 
-for (let item of hidden_elements) {
+
+function getPageLinks(){
+
+  ul = document.getElementsByClassName("pagination__list")
+  pages_unprocessed = ul[0].children
+  pages = []
+  
+  for(let item of pages_unprocessed){
+    elem = item.getElementsByTagName("a")
+
+    if(elem.length > 0){
+      baseElement = elem[0] 
+      if(!(baseElement.text.includes("Next"))){
+        pages.push(baseElement.baseURI + baseElement.search)
+      }
+    }
+  }
+
+  console.log(pages)
+
+}
+
+if(document.URL === "https://www.universal-credit.service.gov.uk/work-search"){
+  getPageLinks()
+
+}else{
+  for (let item of hidden_elements) {
     
     item.id = counter
     counter++
@@ -96,6 +122,11 @@ for (let item of hidden_elements) {
     }
 
     item.appendChild(button)
+  }
 }
+
+
+
+
 
 
