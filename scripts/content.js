@@ -79,7 +79,9 @@ function getPageLinks(){
     if(elem.length > 0){
       baseElement = elem[0] 
       if(!(baseElement.text.includes("Next"))){
-        pages.push(baseElement.baseURI + baseElement.search)
+        link = document.URL
+        link = link.split("?")[0]
+        pages.push(link + baseElement.search)
       }
     }
   }
@@ -89,7 +91,7 @@ function getPageLinks(){
 
 
 async function getPage(URL){
-
+  console.log("fetching: " + URL)
   try {
     const response = await fetch(URL);
     if (!response.ok) {
@@ -105,15 +107,11 @@ async function getPage(URL){
 }
 
 if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" || document.URL === "https://www.universal-credit.service.gov.uk/work-search?page=1"){
-  
-  console.log("FFFFFF")
-  
+    
   pageLinks = getPageLinks()
+  console.log(pageLinks)
 
   getPage(pageLinks[0])
-
-  console.log("CCCCCC")
-
 
 }else if(!(document.URL.includes("page"))){
   
