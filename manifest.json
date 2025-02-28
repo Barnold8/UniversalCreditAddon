@@ -5,7 +5,7 @@
     "manifest_version": 3,
     "content_scripts": [
         {
-          "matches": ["https://www.universal-credit.service.gov.uk/work-search/job","https://www.universal-credit.service.gov.uk/work-search"],
+          "matches": ["https://www.universal-credit.service.gov.uk/work-search*"],
           "js": ["scripts/content.js"]
         }
       ]

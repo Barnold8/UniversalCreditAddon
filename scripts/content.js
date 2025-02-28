@@ -68,7 +68,7 @@ function getDate(){
 
 
 function getPageLinks(){
-
+  // function only gets the latest pages displayed at the bottom of page 1
   ul = document.getElementsByClassName("pagination__list")
   pages_unprocessed = ul[0].children
   pages = []
@@ -84,14 +84,39 @@ function getPageLinks(){
     }
   }
 
-  console.log(pages)
+  return pages
+}
+
+
+async function getPage(URL){
+
+  try {
+    const response = await fetch(URL);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const html = await response.text();
+    console.log(html);
+  } catch (error) {
+    console.error(error.message);
+  }
 
 }
 
-if(document.URL === "https://www.universal-credit.service.gov.uk/work-search"){
-  getPageLinks()
+if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" || document.URL === "https://www.universal-credit.service.gov.uk/work-search?page=1"){
+  
+  console.log("FFFFFF")
+  
+  pageLinks = getPageLinks()
 
-}else{
+  getPage(pageLinks[0])
+
+  console.log("CCCCCC")
+
+
+}else if(!(document.URL.includes("page"))){
+  
   for (let item of hidden_elements) {
     
     item.id = counter
