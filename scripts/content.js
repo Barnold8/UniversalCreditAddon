@@ -1,3 +1,4 @@
+// BUTTON DEFINITION
 buttonClass = document.createElement('style')
 buttonClass.type = "text/css"
 buttonClass.innerHTML = `.button-3 {
@@ -50,8 +51,26 @@ buttonClass.innerHTML = `.button-3 {
     background-color: #298e46;
     box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
   } `
+document.getElementsByTagName('head')[0].appendChild(buttonClass)
+// BUTTON DEFINITION
 
+class Job{
 
+  constructor(heading,application_date){
+
+    let job_heading = heading.split("-")
+    let date = application_date.split("on ")
+
+    this.job_title = job_heading[0]
+    this.company_name = job_heading[1]
+    this.application_date = date[1]
+
+    this.job_title = this.job_title.trim()
+    this.company_name = this.company_name .trim()
+    this.application_date = this.application_date.trim()
+  }
+
+}
 
 async function getPage(URL){
 
@@ -76,6 +95,51 @@ function getDate(){
 
     return [date.getDate(),date.getMonth(),date.getFullYear()]
 
+}
+
+function downloadCSV(csv){
+
+ 
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = 'download.csv';
+
+  a.click();
+}
+
+function generateCSV(jobs){
+
+  csvData = "Job title," + "Company Name," + "Application Date\n"
+
+  for(let job of jobs){
+
+    csvData += job.job_title + ","
+    csvData += job.company_name + ","
+    csvData += job.application_date + ","
+    csvData += "\n"
+
+  }
+
+  console.log(csvData)  
+
+  return csvData
+
+}
+
+function grabJobs(doc){
+
+  jobs = doc.getElementsByClassName("job-list__item")
+  jobs_data = []
+  for(let job of jobs){
+
+    _job = new Job(job.getElementsByClassName("job-list__item-heading")[0].innerText,job.getElementsByClassName("job-list__item-date")[0].innerText)
+    jobs_data.push(_job)
+
+  }
+  return jobs_data
 }
 
 async function getPages(doc, array) {
@@ -116,8 +180,27 @@ async function getPages(doc, array) {
 
 if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" || document.URL === "https://www.universal-credit.service.gov.uk/work-search?page=1"){
   
-  pageContents = getPages(document,[])
-  pageContents.then(result => console.log(result))
+  button = document.createElement("div") // creating a button in the loop allows each element to have a button? what
+  button.innerText = "Generate CSV"
+  button.className = "button-3"
+  button.onclick = function(e){
+
+    pageContents = getPages(document,[])
+
+    pageContents.then(result => {
+      let jobs = []
+      for(let document of result){
+        
+        jobs.push(grabJobs(document))
+      }
+      jobs = jobs.flat()      
+      downloadCSV(generateCSV(jobs))
+    })
+
+  }
+
+  document.getElementsByTagName("main")[0].appendChild(button)
+
 
 
 }else if(!(document.URL.includes("page"))){
@@ -126,7 +209,7 @@ if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" ||
   counter = 0
   
  
-  document.getElementsByTagName('head')[0].appendChild(buttonClass)
+  
 
   for (let item of hidden_elements) {
     
