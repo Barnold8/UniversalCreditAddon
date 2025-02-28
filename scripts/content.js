@@ -68,6 +68,10 @@ class Job{
     this.job_title = this.job_title.trim()
     this.company_name = this.company_name .trim()
     this.application_date = this.application_date.trim()
+
+    this.job_title = this.job_title.replaceAll(","," ")
+    this.company_name = this.company_name.replaceAll(","," ")
+    this.application_date = this.application_date.replaceAll(","," ")
   }
 
 }
@@ -97,9 +101,7 @@ function getDate(){
 
 }
 
-function downloadCSV(csv){
-
- 
+function downloadCSV(csv){ 
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -115,7 +117,6 @@ function generateCSV(jobs){
   csvData = "Job title," + "Company Name," + "Application Date\n"
 
   for(let job of jobs){
-
     csvData += job.job_title + ","
     csvData += job.company_name + ","
     csvData += job.application_date + ","
@@ -123,10 +124,7 @@ function generateCSV(jobs){
 
   }
 
-  console.log(csvData)  
-
   return csvData
-
 }
 
 function grabJobs(doc){
