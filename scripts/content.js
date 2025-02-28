@@ -1,62 +1,19 @@
-hidden_elements = document.getElementsByClassName('reveal-information')
-counter = 0
+async function getPage(URL){
 
-buttonClass = document.createElement('style')
-buttonClass.type = "text/css"
-buttonClass.innerHTML = `.button-3 {
-    appearance: none;
-    background-color: #2ea44f;
-    border: 1px solid rgba(27, 31, 35, .15);
-    border-radius: 6px;
-    box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
-    padding: 6px 16px;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-  
-  .button-3:focus:not(:focus-visible):not(.focus-visible) {
-    box-shadow: none;
-    outline: none;
-  }
-  
-  .button-3:hover {
-    background-color: #2c974b;
-  }
-  
-  .button-3:focus {
-    box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
-    outline: none;
-  }
-  
-  .button-3:disabled {
-    background-color: #94d3a2;
-    border-color: rgba(27, 31, 35, .1);
-    color: rgba(255, 255, 255, .8);
-    cursor: default;
-  }
-  
-  .button-3:active {
-    background-color: #298e46;
-    box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
-  } `
+  try {
+    const response = await fetch(URL);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
 
+    return await response.text()
+  
+  } catch (error) {
+    console.error(error.message);
+    return null
+  }
 
-document.getElementsByTagName('head')[0].appendChild(buttonClass)
-
+}
 
 function getDate(){
 
@@ -66,55 +23,107 @@ function getDate(){
 
 }
 
+async function getPages(doc, array) {
+  if (doc.getElementsByClassName("job-list__item").length <= 0) { 
+    return array
+  }
 
-function getPageLinks(){
-  // function only gets the latest pages displayed at the bottom of page 1
-  ul = document.getElementsByClassName("pagination__list")
-  pages_unprocessed = ul[0].children
-  pages = []
+  array.push(doc)
+
+  let pageList = doc.getElementsByClassName("pagination__list")
+  if (pageList.length === 0) {
+    return array
+  }
+
+  pageList = pageList[0].children
+  let possibleNext = pageList[pageList.length - 1]
+  let possibleNextLink = possibleNext.getElementsByTagName("a")
+
+  if (possibleNextLink.length > 0 && possibleNextLink[0].innerText.includes("Next")) {
   
-  for(let item of pages_unprocessed){
-    elem = item.getElementsByTagName("a")
-
-    if(elem.length > 0){
-      baseElement = elem[0] 
-      if(!(baseElement.text.includes("Next"))){
-        link = document.URL
-        link = link.split("?")[0]
-        pages.push(link + baseElement.search)
+    try {
+      let result = await getPage(possibleNextLink[0].href)
+      if (!result) {
+        return array
       }
+
+      const parser = new DOMParser();
+      let dom = parser.parseFromString(result, "text/html")
+
+      return getPages(dom, array)
+    } catch (error) {
+      return array
     }
+  } else {
+    return array
   }
-
-  return pages
-}
-
-
-async function getPage(URL){
-  console.log("fetching: " + URL)
-  try {
-    const response = await fetch(URL);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const html = await response.text();
-    console.log(html);
-  } catch (error) {
-    console.error(error.message);
-  }
-
 }
 
 if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" || document.URL === "https://www.universal-credit.service.gov.uk/work-search?page=1"){
-    
-  pageLinks = getPageLinks()
-  console.log(pageLinks)
+  
+  pageContents = getPages(document,[])
+  console.log(pageContents)
 
-  getPage(pageLinks[0])
 
 }else if(!(document.URL.includes("page"))){
   
+  hidden_elements = document.getElementsByClassName('reveal-information')
+  counter = 0
+  
+  buttonClass = document.createElement('style')
+  buttonClass.type = "text/css"
+  buttonClass.innerHTML = `.button-3 {
+      appearance: none;
+      background-color: #2ea44f;
+      border: 1px solid rgba(27, 31, 35, .15);
+      border-radius: 6px;
+      box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+      box-sizing: border-box;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      padding: 6px 16px;
+      position: relative;
+      text-align: center;
+      text-decoration: none;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    
+    .button-3:focus:not(:focus-visible):not(.focus-visible) {
+      box-shadow: none;
+      outline: none;
+    }
+    
+    .button-3:hover {
+      background-color: #2c974b;
+    }
+    
+    .button-3:focus {
+      box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+      outline: none;
+    }
+    
+    .button-3:disabled {
+      background-color: #94d3a2;
+      border-color: rgba(27, 31, 35, .1);
+      color: rgba(255, 255, 255, .8);
+      cursor: default;
+    }
+    
+    .button-3:active {
+      background-color: #298e46;
+      box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+    } `
+  document.getElementsByTagName('head')[0].appendChild(buttonClass)
+
   for (let item of hidden_elements) {
     
     item.id = counter
@@ -153,3 +162,9 @@ if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" ||
 
 
 
+// class Rectangle {
+//   constructor(height, width) {
+//     this.height = height;
+//     this.width = width;
+//   }
+// }
