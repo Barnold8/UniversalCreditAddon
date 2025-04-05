@@ -56,7 +56,7 @@ document.getElementsByTagName('head')[0].appendChild(buttonClass)
 
 class Job{
 
-  constructor(heading,application_date,type,note=""){
+  constructor(heading,application_date,type,note="",interview_time=0){
 
     let job_heading = heading.split("-")
     let date = application_date.split("on ")
@@ -76,8 +76,33 @@ class Job{
     this.job_type = type
     this.note = note
 
+    if(this.job_type  === "Going for an interview"){
 
+      let todaysDate = getTodaysDate()
+     
+      if(this.note.toString().includes("N/A")){
+        this.note = `Interview is in ${interview_time} days from ${todaysDate}`
+      }else{
+        this.note += ` | Interview is in ${interview_time} days from ${todaysDate}`
+      }
+
+    }
+
+    this.note = this.note.replace(/(\r\n|\n|\r)/gm, "");
+    this.note = this.note.trim()
   }
+
+}
+
+function getTodaysDate(){
+
+  let todaysDate = new Date()
+  todaysDate.toISOString().split('T')[0]
+  const offset = todaysDate.getTimezoneOffset()
+  todaysDate = new Date(todaysDate.getTime() - (offset*60*1000))
+  todaysDate = todaysDate.toISOString().split('T')[0]
+
+  return todaysDate
 
 }
 
@@ -119,12 +144,14 @@ function downloadCSV(csv){
 
 function generateCSV(jobs){
 
-  csvData = "Job title," + "Company Name," + "Application Date\n"
+  csvData = "Job title," + "Company Name," + "Application Date," + "Type," + "Notes\n"
 
   for(let job of jobs){
     csvData += job.job_title + ","
     csvData += job.company_name + ","
     csvData += job.application_date + ","
+    csvData += job.job_type + ","
+    csvData += job.note + ","
     csvData += "\n"
 
   }
@@ -137,11 +164,14 @@ function grabJobs(doc){
   jobs = doc.getElementsByClassName("job-list__item")
   jobs_data = []
 
-  // console.log(jobs)
+
   for(let job of jobs){
 
     jobLogType = job.getElementsByClassName("job-list__status-label") // Says whether user applied, is interesed, has interview etc
     jobNotes = job.getElementsByClassName("job-list__item-notes")
+    daysTillInterview = job.getElementsByClassName("job-list__status-text")
+
+    daysTillInterview = daysTillInterview[0].innerText.split("in ")[1]
 
     if(jobNotes.length == 1){
       jobNotes = jobNotes[0].innerText
@@ -153,6 +183,8 @@ function grabJobs(doc){
       job.getElementsByClassName("job-list__item-heading")[0].innerText,
       job.getElementsByClassName("job-list__item-date")[0].innerText,
       jobLogType[0].innerText,
+      jobNotes,
+      daysTillInterview,
 
     )
     jobs_data.push(_job)
@@ -213,7 +245,7 @@ if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" ||
         jobs.push(grabJobs(document))
       }
       jobs = jobs.flat()      
-      // downloadCSV(generateCSV(jobs))
+      downloadCSV(generateCSV(jobs))
     })
 
   }
