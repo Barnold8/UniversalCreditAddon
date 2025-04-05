@@ -76,14 +76,17 @@ class Job{
     this.job_type = type
     this.note = note
 
-    if(this.job_type  === "Going for an interview"){
+    if(this.job_type === "Going for an interview"){
 
-      let todaysDate = getTodaysDate()
-     
+      interview_time = Number(interview_time.toString().split(" ")[0])
+
+      let interviewDate = getInterviewDate(interview_time)
+      interviewDate =  interview_time > 0 ? `Date of interview is ${interviewDate.toDateString()}` : "The interview has already happened"; 
+
       if(this.note.toString().includes("N/A")){
-        this.note = `Interview is in ${interview_time} days from ${todaysDate}`
+        this.note = interviewDate
       }else{
-        this.note += ` | Interview is in ${interview_time} days from ${todaysDate}`
+        this.note += ` | ${interviewDate}`
       }
 
     }
@@ -94,15 +97,14 @@ class Job{
 
 }
 
-function getTodaysDate(){
 
-  let todaysDate = new Date()
-  todaysDate.toISOString().split('T')[0]
-  const offset = todaysDate.getTimezoneOffset()
-  todaysDate = new Date(todaysDate.getTime() - (offset*60*1000))
-  todaysDate = todaysDate.toISOString().split('T')[0]
 
-  return todaysDate
+function getInterviewDate(days){
+
+  let interviewDate = new Date()
+  interviewDate.setDate(interviewDate.getDate()+days)
+
+  return interviewDate
 
 }
 
@@ -159,6 +161,8 @@ function generateCSV(jobs){
   return csvData
 }
 
+
+
 function grabJobs(doc){
 
   jobs = doc.getElementsByClassName("job-list__item")
@@ -178,6 +182,7 @@ function grabJobs(doc){
     }else{
       jobNotes = "N/A" 
     }
+
 
     _job = new Job(
       job.getElementsByClassName("job-list__item-heading")[0].innerText,
