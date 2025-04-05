@@ -56,7 +56,7 @@ document.getElementsByTagName('head')[0].appendChild(buttonClass)
 
 class Job{
 
-  constructor(heading,application_date){
+  constructor(heading,application_date,type,note=""){
 
     let job_heading = heading.split("-")
     let date = application_date.split("on ")
@@ -72,6 +72,11 @@ class Job{
     this.job_title = this.job_title.replaceAll(","," ")
     this.company_name = this.company_name.replaceAll(","," ")
     this.application_date = this.application_date.replaceAll(","," ")
+
+    this.job_type = type
+    this.note = note
+
+
   }
 
 }
@@ -131,9 +136,25 @@ function grabJobs(doc){
 
   jobs = doc.getElementsByClassName("job-list__item")
   jobs_data = []
+
+  // console.log(jobs)
   for(let job of jobs){
 
-    _job = new Job(job.getElementsByClassName("job-list__item-heading")[0].innerText,job.getElementsByClassName("job-list__item-date")[0].innerText)
+    jobLogType = job.getElementsByClassName("job-list__status-label") // Says whether user applied, is interesed, has interview etc
+    jobNotes = job.getElementsByClassName("job-list__item-notes")
+
+    if(jobNotes.length == 1){
+      jobNotes = jobNotes[0].innerText
+    }else{
+      jobNotes = "N/A" 
+    }
+
+    _job = new Job(
+      job.getElementsByClassName("job-list__item-heading")[0].innerText,
+      job.getElementsByClassName("job-list__item-date")[0].innerText,
+      jobLogType[0].innerText,
+
+    )
     jobs_data.push(_job)
 
   }
@@ -176,7 +197,7 @@ async function getPages(doc, array) {
   }
 }
 
-if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" || document.URL === "https://www.universal-credit.service.gov.uk/work-search?page=1"){
+if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" || document.URL === "https://www.universal-credit.service.gov.uk/work-search?page=1"){ // Add the generate csv button so the user can generate a csv on the jobs theyve logged
   
   button = document.createElement("div") // creating a button in the loop allows each element to have a button? what
   button.innerText = "Generate CSV"
@@ -192,7 +213,7 @@ if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" ||
         jobs.push(grabJobs(document))
       }
       jobs = jobs.flat()      
-      downloadCSV(generateCSV(jobs))
+      // downloadCSV(generateCSV(jobs))
     })
 
   }
@@ -201,14 +222,11 @@ if(document.URL === "https://www.universal-credit.service.gov.uk/work-search" ||
 
 
 
-}else if(!(document.URL.includes("page"))){
+}else if(!(document.URL.includes("page"))){ // Add "Add today's date" button to job logging fields
   
   hidden_elements = document.getElementsByClassName('reveal-information')
   counter = 0
   
- 
-  
-
   for (let item of hidden_elements) {
     
     item.id = counter
