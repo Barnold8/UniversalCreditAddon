@@ -1,7 +1,7 @@
 {
     "name": "GovDateAdder",
     "description": "Allows automatic date pasting in gov website job logging",
-    "version": "1.0",
+    "version": "2.0",
     "manifest_version": 3,
     "content_scripts": [
         {
