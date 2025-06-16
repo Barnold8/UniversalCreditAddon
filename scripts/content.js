@@ -233,7 +233,7 @@ async function getPages(doc, array) {
     return array
   }
 }
-//document.URL === "" || document.URL === "https://www.universal-credit.service.gov.uk/work-search?page=1"
+
 if(document.URL.includes("https://www.universal-credit.service.gov.uk/work-search")){ // Add the generate csv button so the user can generate a csv on the jobs theyve logged
   
   button = document.createElement("div") // creating a button in the loop allows each element to have a button? what
