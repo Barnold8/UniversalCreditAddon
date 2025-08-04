@@ -234,32 +234,7 @@ async function getPages(doc, array) {
   }
 }
 
-if(document.URL.includes("https://www.universal-credit.service.gov.uk/work-search")){ // Add the generate csv button so the user can generate a csv on the jobs theyve logged
-  
-  button = document.createElement("div") // creating a button in the loop allows each element to have a button? what
-  button.innerText = "Generate CSV"
-  button.className = "button-3"
-  button.onclick = function(e){
-
-    pageContents = getPages(document,[])
-
-    pageContents.then(result => {
-      let jobs = []
-      for(let document of result){
-        
-        jobs.push(grabJobs(document))
-      }
-      jobs = jobs.flat()      
-      downloadCSV(generateCSV(jobs))
-    })
-
-  }
-
-  document.getElementsByTagName("main")[0].appendChild(button)
-
-
-
-}else if(!(document.URL.includes("page"))){ // Add "Add today's date" button to job logging fields
+if(document.URL.includes("job")){ // Add "Add today's date" button to job logging fields
   
   hidden_elements = document.getElementsByClassName('reveal-information')
   counter = 0
@@ -295,4 +270,33 @@ if(document.URL.includes("https://www.universal-credit.service.gov.uk/work-searc
 
     item.appendChild(button)
   }
+
+
+
+}else if(document.URL.includes("https://www.universal-credit.service.gov.uk/work-search")){ // Add the generate csv button so the user can generate a csv on the jobs theyve logged
+  
+  button = document.createElement("div") // creating a button in the loop allows each element to have a button? what
+  button.innerText = "Generate CSV"
+  button.className = "button-3"
+  button.onclick = function(e){
+
+    pageContents = getPages(document,[])
+
+    pageContents.then(result => {
+      let jobs = []
+      for(let document of result){
+        
+        jobs.push(grabJobs(document))
+      }
+      jobs = jobs.flat()      
+      downloadCSV(generateCSV(jobs))
+    })
+
+  }
+
+  document.getElementsByTagName("main")[0].appendChild(button)
+  
 }
+
+
+
