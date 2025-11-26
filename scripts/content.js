@@ -149,6 +149,7 @@ function generateCSV(jobs){
   csvData = "Job title," + "Company Name," + "Application Date," + "Type," + "Notes\n"
 
   for(let job of jobs){
+    //console.log(job)
     csvData += job.job_title + ","
     csvData += job.company_name + ","
     csvData += job.application_date + ","
@@ -236,13 +237,17 @@ async function getPages(doc, array) {
 
 if(document.URL.includes("job")){ // Add "Add today's date" button to job logging fields
   
-  hidden_elements = document.getElementsByClassName('reveal-information')
+  //console.log("Hello again")
+  //reveal-information
+  hidden_elements = document.getElementsByClassName('date-group')
   counter = 0
   
   for (let item of hidden_elements) {
     
     item.id = counter
     counter++
+
+    item.appendChild(document.createElement("br"))
 
     button = document.createElement("div") // creating a button in the loop allows each element to have a button? what
     button.innerText = "Add today's date"
